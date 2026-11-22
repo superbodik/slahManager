@@ -1,0 +1,83 @@
+[
+  {
+    "id": "network.wifi-power-saving",
+    "name": "Wi-Fi at maximum performance",
+    "description": "Stops the Wi-Fi adapter from dozing between packets, both on charger and on battery. Removes the small delays and spikes power saving adds to every round trip.",
+    "category": "network",
+    "risk": "low",
+    "recommended": true,
+    "profiles": ["gaming"],
+    "operations": [
+      { "type": "powerSetting", "subgroupGuid": "19cbb8fa-5279-450e-9fac-8a3d5fedd0c1", "settingGuid": "12bbebe6-58d6-4636-95bb-3217ef867c1a", "acValue": 0, "dcValue": 0, "defaultAcValue": 0, "defaultDcValue": 2 }
+    ]
+  },
+  {
+    "id": "network.adapter-sleep",
+    "name": "Keep network adapters awake",
+    "description": "Turns off \"Allow the computer to turn off this device to save power\" for every physical network adapter, so the connection never has to wake up mid game.",
+    "category": "network",
+    "risk": "low",
+    "rebootRequired": true,
+    "recommended": true,
+    "profiles": ["gaming"],
+    "operations": [
+      {
+        "type": "script",
+        "prelude": "$adapters = @(Get-NetAdapter -Physical | Get-NetAdapterPowerManagement -ErrorAction SilentlyContinue | Where-Object { [string]$_.AllowComputerToTurnOffDevice -ne 'Unsupported' })",
+        "check": "[string](@($adapters | Where-Object { [string]$_.AllowComputerToTurnOffDevice -ne 'Disabled' }).Count -eq 0)",
+        "capture": "$saved = @{}; foreach ($a in $adapters) { $saved[$a.Name] = [string]$a.AllowComputerToTurnOffDevice }; $saved | ConvertTo-Json -Compress",
+        "apply": "foreach ($a in $adapters) { Set-NetAdapterPowerManagement -Name $a.Name -AllowComputerToTurnOffDevice Disabled -NoRestart }",
+        "restore": "$saved = if ($state) { $state | ConvertFrom-Json } else { $null }; foreach ($a in $adapters) { $value = if ($saved -and $saved.($a.Name)) { $saved.($a.Name) } else { 'Enabled' }; Set-NetAdapterPowerManagement -Name $a.Name -AllowComputerToTurnOffDevice $value -NoRestart }"
+      }
+    ]
+  },
+  {
+    "id": "network.ethernet-latency",
+    "name": "Low latency Ethernet",
+    "description": "Turns off Energy Efficient Ethernet, Green Ethernet and interrupt moderation on wired adapters. Packets are handled the moment they arrive instead of being batched. Applies after the adapter reconnects.",
+    "category": "network",
+    "risk": "low",
+    "rebootRequired": true,
+    "recommended": true,
+    "profiles": ["gaming"],
+    "operations": [
+      {
+        "type": "script",
+        "prelude": "$wanted = @{ '*EEE' = '0'; '*InterruptModeration' = '0'; 'EnableGreenEthernet' = '0' }; $props = @(Get-NetAdapter -Physical | Where-Object { $_.MediaType -eq '802.3' } | ForEach-Object { Get-NetAdapterAdvancedProperty -Name $_.Name -AllProperties -ErrorAction SilentlyContinue } | Where-Object { $wanted.ContainsKey($_.RegistryKeyword) })",
+        "check": "[string](@($props | Where-Object { [string]$_.RegistryValue[0] -ne $wanted[$_.RegistryKeyword] }).Count -eq 0)",
+        "capture": "$saved = @{}; foreach ($p in $props) { $saved[$p.Name + '|' + $p.RegistryKeyword] = [string]$p.RegistryValue[0] }; $saved | ConvertTo-Json -Compress",
+        "apply": "foreach ($p in $props) { Set-NetAdapterAdvancedProperty -Name $p.Name -RegistryKeyword $p.RegistryKeyword -RegistryValue $wanted[$p.RegistryKeyword] -NoRestart }",
+        "restore": "$saved = if ($state) { $state | ConvertFrom-Json } else { $null }; foreach ($p in $props) { $key = $p.Name + '|' + $p.RegistryKeyword; $value = if ($saved -and $saved.$key) { $saved.$key } else { '1' }; Set-NetAdapterAdvancedProperty -Name $p.Name -RegistryKeyword $p.RegistryKeyword -RegistryValue $value -NoRestart }"
+      }
+    ]
+  },
+  {
+    "id": "network.nagle",
+    "name": "Disable Nagle's algorithm",
+    "description": "Sends small TCP packets immediately instead of bundling them. Helps games that use TCP, such as many MMOs. Games on UDP, including CS2 and Valorant, are not affected.",
+    "category": "network",
+    "risk": "low",
+    "rebootRequired": true,
+    "operations": [
+      {
+        "type": "script",
+        "prelude": "$root = 'HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\\Interfaces'; $ifs = @(Get-ChildItem $root | Where-Object { $p = Get-ItemProperty $_.PSPath; $p.DhcpIPAddress -or $p.IPAddress })",
+        "check": "$ok = $true; foreach ($i in $ifs) { $p = Get-ItemProperty $i.PSPath; if ($p.TcpAckFrequency -ne 1 -or $p.TCPNoDelay -ne 1) { $ok = $false } }; [string]$ok",
+        "capture": "$saved = @{}; foreach ($i in $ifs) { $p = Get-ItemProperty $i.PSPath; $saved[$i.PSChildName] = @{ ack = $p.TcpAckFrequency; nodelay = $p.TCPNoDelay } }; $saved | ConvertTo-Json -Compress",
+        "apply": "foreach ($i in $ifs) { Set-ItemProperty $i.PSPath -Name TcpAckFrequency -Value 1 -Type DWord; Set-ItemProperty $i.PSPath -Name TCPNoDelay -Value 1 -Type DWord }",
+        "restore": "$saved = if ($state) { $state | ConvertFrom-Json } else { $null }; foreach ($i in $ifs) { $entry = if ($saved) { $saved.($i.PSChildName) } else { $null }; foreach ($pair in @(@('TcpAckFrequency', 'ack'), @('TCPNoDelay', 'nodelay'))) { $value = if ($entry) { $entry.($pair[1]) } else { $null }; if ($null -eq $value) { Remove-ItemProperty $i.PSPath -Name $pair[0] -ErrorAction SilentlyContinue } else { Set-ItemProperty $i.PSPath -Name $pair[0] -Value $value -Type DWord } } }"
+      }
+    ]
+  },
+  {
+    "id": "network.delivery-optimization",
+    "name": "Stop sharing updates with other PCs",
+    "description": "Windows can upload update files to other computers in the background, which eats upload bandwidth and raises ping. This keeps updates downloading from Microsoft only.",
+    "category": "network",
+    "risk": "low",
+    "recommended": true,
+    "operations": [
+      { "type": "registry", "hive": "localMachine", "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization", "name": "DODownloadMode", "kind": "dword", "value": 0 }
+    ]
+  }
+]

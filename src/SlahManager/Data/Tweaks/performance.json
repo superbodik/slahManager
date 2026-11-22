@@ -1,0 +1,79 @@
+[
+  {
+    "id": "performance.startup-delay",
+    "name": "Remove startup apps delay",
+    "description": "Windows waits several seconds after sign in before launching startup apps. This starts them immediately.",
+    "category": "performance",
+    "risk": "low",
+    "recommended": true,
+    "operations": [
+      { "type": "registry", "hive": "currentUser", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Serialize", "name": "StartupDelayInMSec", "kind": "dword", "value": 0 }
+    ]
+  },
+  {
+    "id": "performance.menu-delay",
+    "name": "Faster menus",
+    "description": "Removes the 400 millisecond pause before cascading menus open.",
+    "category": "performance",
+    "risk": "low",
+    "rebootRequired": true,
+    "recommended": true,
+    "operations": [
+      { "type": "registry", "hive": "currentUser", "path": "Control Panel\\Desktop", "name": "MenuShowDelay", "kind": "string", "value": "0", "defaultValue": "400" }
+    ]
+  },
+  {
+    "id": "performance.superfetch",
+    "name": "Disable SysMain prefetching",
+    "description": "Stops the service that preloads apps into memory. It brings little on a solid state drive and causes background disk activity.",
+    "category": "performance",
+    "risk": "low",
+    "recommended": true,
+    "requirements": { "storageKinds": ["ssd", "nvme"] },
+    "operations": [
+      { "type": "service", "name": "SysMain", "startup": "disabled", "defaultStartup": "automatic" }
+    ]
+  },
+  {
+    "id": "performance.background-apps",
+    "name": "Stop apps running in the background",
+    "description": "Prevents Store apps from running when closed. Some apps will stop delivering notifications.",
+    "category": "performance",
+    "risk": "medium",
+    "operations": [
+      { "type": "registry", "hive": "localMachine", "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy", "name": "LetAppsRunInBackground", "kind": "dword", "value": 2 }
+    ]
+  },
+  {
+    "id": "performance.fast-startup",
+    "name": "Disable Fast Startup",
+    "description": "Makes shutdown a full shutdown instead of a hibernation snapshot. Fixes stale driver state at the cost of a slightly slower cold boot.",
+    "category": "performance",
+    "risk": "low",
+    "rebootRequired": true,
+    "operations": [
+      { "type": "registry", "hive": "localMachine", "path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Power", "name": "HiberbootEnabled", "kind": "dword", "value": 0, "defaultValue": 1 }
+    ]
+  },
+  {
+    "id": "performance.transparency",
+    "name": "Disable transparency effects",
+    "description": "Turns off the blur behind the taskbar, Start and system windows, which saves a little GPU time.",
+    "category": "performance",
+    "risk": "low",
+    "operations": [
+      { "type": "registry", "hive": "currentUser", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "name": "EnableTransparency", "kind": "dword", "value": 0, "defaultValue": 1 }
+    ]
+  },
+  {
+    "id": "performance.window-animations",
+    "name": "Disable window animations",
+    "description": "Removes minimize and maximize animations so windows respond instantly. Applies after the next sign in.",
+    "category": "performance",
+    "risk": "low",
+    "rebootRequired": true,
+    "operations": [
+      { "type": "registry", "hive": "currentUser", "path": "Control Panel\\Desktop\\WindowMetrics", "name": "MinAnimate", "kind": "string", "value": "0", "defaultValue": "1" }
+    ]
+  }
+]

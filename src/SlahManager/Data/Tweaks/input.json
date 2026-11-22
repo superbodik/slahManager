@@ -1,0 +1,90 @@
+[
+  {
+    "id": "input.timer-resolution",
+    "name": "Honor timer requests system-wide",
+    "description": "Windows 11 limits a program's timer resolution request to that program only. This restores the global behavior so a 0.5 millisecond request from Game Boost reaches the game.",
+    "category": "input",
+    "risk": "low",
+    "rebootRequired": true,
+    "recommended": true,
+    "profiles": ["gaming"],
+    "requirements": { "minBuild": 22000 },
+    "operations": [
+      { "type": "registry", "hive": "localMachine", "path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\kernel", "name": "GlobalTimerResolutionRequests", "kind": "dword", "value": 1 }
+    ]
+  },
+  {
+    "id": "input.accessibility-popups",
+    "name": "Disable accessibility key popups",
+    "description": "Stops Sticky Keys, Filter Keys and Toggle Keys from interrupting a game when Shift is pressed five times or a key is held down. Applies after the next sign in.",
+    "category": "input",
+    "risk": "low",
+    "rebootRequired": true,
+    "recommended": true,
+    "profiles": ["gaming"],
+    "operations": [
+      { "type": "registry", "hive": "currentUser", "path": "Control Panel\\Accessibility\\StickyKeys", "name": "Flags", "kind": "string", "value": "506", "defaultValue": "510" },
+      { "type": "registry", "hive": "currentUser", "path": "Control Panel\\Accessibility\\Keyboard Response", "name": "Flags", "kind": "string", "value": "122", "defaultValue": "126" },
+      { "type": "registry", "hive": "currentUser", "path": "Control Panel\\Accessibility\\ToggleKeys", "name": "Flags", "kind": "string", "value": "58", "defaultValue": "62" }
+    ]
+  },
+  {
+    "id": "input.windowed-optimizations",
+    "name": "Optimizations for windowed games",
+    "description": "Runs borderless and windowed DirectX 10 and 11 games through the modern flip presentation model, which cuts input latency to nearly that of exclusive fullscreen.",
+    "category": "input",
+    "risk": "low",
+    "recommended": true,
+    "profiles": ["gaming"],
+    "requirements": { "minBuild": 22621 },
+    "operations": [
+      { "type": "registryFlag", "hive": "currentUser", "path": "Software\\Microsoft\\DirectX\\UserGpuPreferences", "name": "DirectXUserGlobalSettings", "flag": "SwapEffectUpgradeEnable", "flagValue": "1" }
+    ]
+  },
+  {
+    "id": "input.usb-selective-suspend",
+    "name": "Disable USB selective suspend",
+    "description": "Keeps USB ports awake while plugged in, so a mouse or keyboard never needs a wake up delay after a pause.",
+    "category": "input",
+    "risk": "low",
+    "recommended": true,
+    "profiles": ["gaming"],
+    "operations": [
+      { "type": "powerSetting", "subgroupGuid": "2a737441-1930-4402-8d77-b2bebba308a3", "settingGuid": "48e6b7a6-50f5-4782-a5d4-53bb8f07e226", "acValue": 0, "defaultAcValue": 1 }
+    ]
+  },
+  {
+    "id": "input.pcie-link-state",
+    "name": "Disable PCIe link power saving",
+    "description": "Stops the graphics card link from dropping into a low power state while plugged in, which removes a wake up delay when a frame is needed.",
+    "category": "input",
+    "risk": "low",
+    "recommended": true,
+    "profiles": ["gaming"],
+    "operations": [
+      { "type": "powerSetting", "subgroupGuid": "501a4d13-42af-4429-9fd1-a8218c268e20", "settingGuid": "ee12f906-d277-404b-b6da-e5fa1a576df5", "acValue": 0, "defaultAcValue": 1 }
+    ]
+  },
+  {
+    "id": "input.core-parking",
+    "name": "Keep all CPU cores awake",
+    "description": "Disables core parking while plugged in, so work can start on any core immediately instead of waiting for one to wake up.",
+    "category": "input",
+    "risk": "low",
+    "recommended": true,
+    "profiles": ["gaming"],
+    "operations": [
+      { "type": "powerSetting", "subgroupGuid": "54533251-82be-4824-96c1-47b60b740d00", "settingGuid": "0cc5b647-c1df-4637-891a-dec35c318583", "acValue": 100, "defaultAcValue": 10 }
+    ]
+  },
+  {
+    "id": "input.cpu-full-speed",
+    "name": "Keep the CPU at full speed",
+    "description": "Pins the minimum processor state at 100 percent while plugged in. Lowest response time, but constant heat and power draw. Game Boost does this only while a game runs.",
+    "category": "input",
+    "risk": "medium",
+    "operations": [
+      { "type": "powerSetting", "subgroupGuid": "54533251-82be-4824-96c1-47b60b740d00", "settingGuid": "893dee8e-2bef-41e0-89c6-b55d0929964c", "acValue": 100, "defaultAcValue": 5 }
+    ]
+  }
+]

@@ -1,0 +1,115 @@
+[
+  {
+    "id": "gaming.game-mode",
+    "name": "Enable Game Mode",
+    "description": "Lets Windows prioritize the running game and hold back driver installs and update restarts while you play.",
+    "category": "gaming",
+    "risk": "low",
+    "recommended": true,
+    "profiles": ["gaming"],
+    "requirements": { "minBuild": 17134 },
+    "operations": [
+      { "type": "registry", "hive": "currentUser", "path": "Software\\Microsoft\\GameBar", "name": "AutoGameModeEnabled", "kind": "dword", "value": 1 },
+      { "type": "registry", "hive": "currentUser", "path": "Software\\Microsoft\\GameBar", "name": "AllowAutoGameMode", "kind": "dword", "value": 1 }
+    ]
+  },
+  {
+    "id": "gaming.disable-game-capture",
+    "name": "Disable background game capture",
+    "description": "Turns off Game DVR recording hooks that cost frame time even when you never record anything.",
+    "category": "gaming",
+    "risk": "low",
+    "recommended": true,
+    "profiles": ["gaming"],
+    "operations": [
+      { "type": "registry", "hive": "currentUser", "path": "System\\GameConfigStore", "name": "GameDVR_Enabled", "kind": "dword", "value": 0, "defaultValue": 1 },
+      { "type": "registry", "hive": "currentUser", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR", "name": "AppCaptureEnabled", "kind": "dword", "value": 0, "defaultValue": 1 }
+    ]
+  },
+  {
+    "id": "gaming.multimedia-scheduler",
+    "name": "Prioritize games in the scheduler",
+    "description": "Raises the CPU and disk priority class that the multimedia scheduler gives to game threads.",
+    "category": "gaming",
+    "risk": "low",
+    "recommended": true,
+    "profiles": ["gaming"],
+    "operations": [
+      { "type": "registry", "hive": "localMachine", "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games", "name": "GPU Priority", "kind": "dword", "value": 8, "defaultValue": 8 },
+      { "type": "registry", "hive": "localMachine", "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games", "name": "Priority", "kind": "dword", "value": 6, "defaultValue": 2 },
+      { "type": "registry", "hive": "localMachine", "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games", "name": "Scheduling Category", "kind": "string", "value": "High", "defaultValue": "Medium" },
+      { "type": "registry", "hive": "localMachine", "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games", "name": "SFIO Priority", "kind": "string", "value": "High", "defaultValue": "Normal" }
+    ]
+  },
+  {
+    "id": "gaming.system-responsiveness",
+    "name": "Reserve less CPU for background tasks",
+    "description": "Stops Windows from holding back a share of CPU time (20 percent by default) for multimedia background work.",
+    "category": "gaming",
+    "risk": "low",
+    "recommended": true,
+    "profiles": ["gaming"],
+    "operations": [
+      { "type": "registry", "hive": "localMachine", "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile", "name": "SystemResponsiveness", "kind": "dword", "value": 0, "defaultValue": 20 }
+    ]
+  },
+  {
+    "id": "gaming.network-throttling",
+    "name": "Disable network throttling",
+    "description": "Removes the packet rate limit Windows applies to multimedia traffic, which lowers network latency in online games.",
+    "category": "gaming",
+    "risk": "low",
+    "recommended": true,
+    "profiles": ["gaming"],
+    "operations": [
+      { "type": "registry", "hive": "localMachine", "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile", "name": "NetworkThrottlingIndex", "kind": "dword", "value": 4294967295, "defaultValue": 10 }
+    ]
+  },
+  {
+    "id": "gaming.pointer-precision",
+    "name": "Disable pointer acceleration",
+    "description": "Makes mouse movement linear so aim stays consistent regardless of how fast you move. Applies after the next sign in.",
+    "category": "gaming",
+    "risk": "low",
+    "rebootRequired": true,
+    "recommended": true,
+    "profiles": ["gaming"],
+    "operations": [
+      { "type": "registry", "hive": "currentUser", "path": "Control Panel\\Mouse", "name": "MouseSpeed", "kind": "string", "value": "0", "defaultValue": "1" },
+      { "type": "registry", "hive": "currentUser", "path": "Control Panel\\Mouse", "name": "MouseThreshold1", "kind": "string", "value": "0", "defaultValue": "6" },
+      { "type": "registry", "hive": "currentUser", "path": "Control Panel\\Mouse", "name": "MouseThreshold2", "kind": "string", "value": "0", "defaultValue": "10" }
+    ]
+  },
+  {
+    "id": "gaming.foreground-boost",
+    "name": "Favor foreground applications",
+    "description": "Gives the window you are using longer and higher priority time slices than background processes.",
+    "category": "gaming",
+    "risk": "medium",
+    "operations": [
+      { "type": "registry", "hive": "localMachine", "path": "SYSTEM\\CurrentControlSet\\Control\\PriorityControl", "name": "Win32PrioritySeparation", "kind": "dword", "value": 38, "defaultValue": 2 }
+    ]
+  },
+  {
+    "id": "gaming.gpu-scheduling",
+    "name": "Hardware accelerated GPU scheduling",
+    "description": "Lets the graphics card manage its own memory queue. Helps some games and hurts others, so test before keeping it.",
+    "category": "gaming",
+    "risk": "medium",
+    "rebootRequired": true,
+    "requirements": { "minBuild": 19041, "discreteGpu": true, "gpuVendors": ["nvidia", "amd"] },
+    "operations": [
+      { "type": "registry", "hive": "localMachine", "path": "SYSTEM\\CurrentControlSet\\Control\\GraphicsDrivers", "name": "HwSchMode", "kind": "dword", "value": 2, "defaultValue": 1 }
+    ]
+  },
+  {
+    "id": "gaming.performance-power-plan",
+    "name": "High performance power plan",
+    "description": "Creates and activates a plan that keeps the processor at full speed. Raises power draw and heat, so it suits a desktop or a laptop on charger.",
+    "category": "gaming",
+    "risk": "low",
+    "operations": [
+      { "type": "powerPlan", "sourceGuid": "e9a42b02-d5df-448d-aa00-03f14749eb61", "targetGuid": "5e1a4a00-7c1d-4b6e-9a53-0d6f2c9b8e11", "name": "slahManager Performance" }
+    ]
+  }
+]

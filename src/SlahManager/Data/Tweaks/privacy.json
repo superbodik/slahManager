@@ -1,0 +1,116 @@
+[
+  {
+    "id": "privacy.diagnostic-data",
+    "name": "Minimize diagnostic data",
+    "description": "Sets the diagnostic data policy to the lowest level. Home and Pro editions treat this as the required minimum.",
+    "category": "privacy",
+    "risk": "low",
+    "recommended": true,
+    "operations": [
+      { "type": "registry", "hive": "localMachine", "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection", "name": "AllowTelemetry", "kind": "dword", "value": 0 },
+      { "type": "registry", "hive": "localMachine", "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection", "name": "DoNotShowFeedbackNotifications", "kind": "dword", "value": 1 }
+    ]
+  },
+  {
+    "id": "privacy.telemetry-services",
+    "name": "Disable telemetry services",
+    "description": "Stops the Connected User Experiences service and the WAP push message router that feed diagnostic uploads.",
+    "category": "privacy",
+    "risk": "low",
+    "recommended": true,
+    "operations": [
+      { "type": "service", "name": "DiagTrack", "startup": "disabled", "defaultStartup": "automatic" },
+      { "type": "service", "name": "dmwappushservice", "startup": "disabled", "defaultStartup": "manual" }
+    ]
+  },
+  {
+    "id": "privacy.telemetry-tasks",
+    "name": "Disable telemetry scheduled tasks",
+    "description": "Turns off the compatibility appraiser and customer experience tasks that wake the machine to collect usage data.",
+    "category": "privacy",
+    "risk": "low",
+    "recommended": true,
+    "operations": [
+      { "type": "scheduledTask", "path": "\\Microsoft\\Windows\\Application Experience\\", "name": "Microsoft Compatibility Appraiser" },
+      { "type": "scheduledTask", "path": "\\Microsoft\\Windows\\Application Experience\\", "name": "ProgramDataUpdater" },
+      { "type": "scheduledTask", "path": "\\Microsoft\\Windows\\Customer Experience Improvement Program\\", "name": "Consolidator" },
+      { "type": "scheduledTask", "path": "\\Microsoft\\Windows\\Customer Experience Improvement Program\\", "name": "UsbCeip" }
+    ]
+  },
+  {
+    "id": "privacy.advertising-id",
+    "name": "Disable advertising ID",
+    "description": "Stops apps from using a per user identifier to build an advertising profile.",
+    "category": "privacy",
+    "risk": "low",
+    "recommended": true,
+    "operations": [
+      { "type": "registry", "hive": "currentUser", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo", "name": "Enabled", "kind": "dword", "value": 0, "defaultValue": 1 }
+    ]
+  },
+  {
+    "id": "privacy.suggestions",
+    "name": "Remove suggestions and promoted content",
+    "description": "Hides suggested apps in Start, tips on the lock screen and silent installs of promoted apps.",
+    "category": "privacy",
+    "risk": "low",
+    "recommended": true,
+    "operations": [
+      { "type": "registry", "hive": "currentUser", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SystemPaneSuggestionsEnabled", "kind": "dword", "value": 0, "defaultValue": 1 },
+      { "type": "registry", "hive": "currentUser", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SoftLandingEnabled", "kind": "dword", "value": 0, "defaultValue": 1 },
+      { "type": "registry", "hive": "currentUser", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SilentInstalledAppsEnabled", "kind": "dword", "value": 0, "defaultValue": 1 },
+      { "type": "registry", "hive": "currentUser", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "RotatingLockScreenOverlayEnabled", "kind": "dword", "value": 0, "defaultValue": 1 },
+      { "type": "registry", "hive": "currentUser", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-338388Enabled", "kind": "dword", "value": 0, "defaultValue": 1 },
+      { "type": "registry", "hive": "currentUser", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-338389Enabled", "kind": "dword", "value": 0, "defaultValue": 1 },
+      { "type": "registry", "hive": "currentUser", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-353694Enabled", "kind": "dword", "value": 0, "defaultValue": 1 },
+      { "type": "registry", "hive": "currentUser", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-353696Enabled", "kind": "dword", "value": 0, "defaultValue": 1 }
+    ]
+  },
+  {
+    "id": "privacy.web-search",
+    "name": "Disable web results in Start search",
+    "description": "Keeps Start search local so typed queries are not sent to Bing.",
+    "category": "privacy",
+    "risk": "low",
+    "recommended": true,
+    "operations": [
+      { "type": "registry", "hive": "currentUser", "path": "Software\\Policies\\Microsoft\\Windows\\Explorer", "name": "DisableSearchBoxSuggestions", "kind": "dword", "value": 1 }
+    ]
+  },
+  {
+    "id": "privacy.activity-history",
+    "name": "Disable activity history",
+    "description": "Stops Windows from recording and uploading the apps and files you open.",
+    "category": "privacy",
+    "risk": "low",
+    "recommended": true,
+    "operations": [
+      { "type": "registry", "hive": "localMachine", "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System", "name": "EnableActivityFeed", "kind": "dword", "value": 0 },
+      { "type": "registry", "hive": "localMachine", "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System", "name": "PublishUserActivities", "kind": "dword", "value": 0 },
+      { "type": "registry", "hive": "localMachine", "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System", "name": "UploadUserActivities", "kind": "dword", "value": 0 }
+    ]
+  },
+  {
+    "id": "privacy.recall",
+    "name": "Disable Recall data analysis",
+    "description": "Blocks Windows from taking and analyzing periodic snapshots of your screen.",
+    "category": "privacy",
+    "risk": "low",
+    "recommended": true,
+    "requirements": { "minBuild": 22621 },
+    "operations": [
+      { "type": "registry", "hive": "localMachine", "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsAI", "name": "DisableAIDataAnalysis", "kind": "dword", "value": 1 }
+    ]
+  },
+  {
+    "id": "privacy.widgets",
+    "name": "Disable Widgets and news feed",
+    "description": "Turns off the Widgets board and its background news and weather refresh.",
+    "category": "privacy",
+    "risk": "low",
+    "requirements": { "minBuild": 22000 },
+    "operations": [
+      { "type": "registry", "hive": "localMachine", "path": "SOFTWARE\\Policies\\Microsoft\\Dsh", "name": "AllowNewsAndInterests", "kind": "dword", "value": 0 }
+    ]
+  }
+]

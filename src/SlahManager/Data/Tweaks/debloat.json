@@ -1,0 +1,101 @@
+[
+  {
+    "id": "debloat.news-weather",
+    "name": "Remove News, Weather and Bing Search",
+    "description": "Uninstalls the Bing powered news, weather and search apps for every user and for new accounts.",
+    "category": "debloat",
+    "risk": "medium",
+    "reversible": false,
+    "operations": [
+      { "type": "appx", "packages": ["Microsoft.BingNews", "Microsoft.BingWeather", "Microsoft.BingSearch"] }
+    ]
+  },
+  {
+    "id": "debloat.promo-apps",
+    "name": "Remove Clipchamp and Microsoft 365 hub",
+    "description": "Uninstalls the video editor and the Office promotion launcher that ship preinstalled.",
+    "category": "debloat",
+    "risk": "medium",
+    "reversible": false,
+    "operations": [
+      { "type": "appx", "packages": ["Clipchamp.Clipchamp", "Microsoft.MicrosoftOfficeHub"] }
+    ]
+  },
+  {
+    "id": "debloat.casual-games",
+    "name": "Remove casual games",
+    "description": "Uninstalls Solitaire Collection and the sponsored Candy Crush titles.",
+    "category": "debloat",
+    "risk": "medium",
+    "reversible": false,
+    "operations": [
+      { "type": "appx", "packages": ["Microsoft.MicrosoftSolitaireCollection", "king.com.CandyCrushSaga", "king.com.CandyCrushSodaSaga"] }
+    ]
+  },
+  {
+    "id": "debloat.help-tips",
+    "name": "Remove Tips and Get Help",
+    "description": "Uninstalls the onboarding and support apps that most people never open.",
+    "category": "debloat",
+    "risk": "medium",
+    "reversible": false,
+    "operations": [
+      { "type": "appx", "packages": ["Microsoft.GetHelp", "Microsoft.Getstarted"] }
+    ]
+  },
+  {
+    "id": "debloat.feedback-hub",
+    "name": "Remove Feedback Hub",
+    "description": "Uninstalls the app used to send feedback and bug reports to Microsoft.",
+    "category": "debloat",
+    "risk": "medium",
+    "reversible": false,
+    "operations": [
+      { "type": "appx", "packages": ["Microsoft.WindowsFeedbackHub"] }
+    ]
+  },
+  {
+    "id": "debloat.maps-people",
+    "name": "Remove Maps and People",
+    "description": "Uninstalls the offline maps and contacts apps.",
+    "category": "debloat",
+    "risk": "medium",
+    "reversible": false,
+    "operations": [
+      { "type": "appx", "packages": ["Microsoft.WindowsMaps", "Microsoft.People"] }
+    ]
+  },
+  {
+    "id": "debloat.phone-link",
+    "name": "Remove Phone Link",
+    "description": "Uninstalls the app that pairs Windows with a phone. Skip this if you use it.",
+    "category": "debloat",
+    "risk": "medium",
+    "reversible": false,
+    "operations": [
+      { "type": "appx", "packages": ["Microsoft.YourPhone", "MicrosoftWindows.CrossDevice"] }
+    ]
+  },
+  {
+    "id": "debloat.copilot",
+    "name": "Remove Copilot app",
+    "description": "Uninstalls the standalone Copilot assistant app.",
+    "category": "debloat",
+    "risk": "medium",
+    "reversible": false,
+    "operations": [
+      { "type": "appx", "packages": ["Microsoft.Copilot"] }
+    ]
+  },
+  {
+    "id": "debloat.teams-productivity",
+    "name": "Remove Teams, To Do and Power Automate",
+    "description": "Uninstalls the personal Teams client and two productivity apps that are rarely used.",
+    "category": "debloat",
+    "risk": "medium",
+    "reversible": false,
+    "operations": [
+      { "type": "appx", "packages": ["MSTeams", "MicrosoftTeams", "Microsoft.Todos", "Microsoft.PowerAutomateDesktop"] }
+    ]
+  }
+]
